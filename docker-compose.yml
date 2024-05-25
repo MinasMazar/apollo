@@ -1,0 +1,44 @@
+# Version of docker-compose.
+version: '3'
+
+# Containers we're going to run.
+name: apollo
+services:
+   # Our Phoenix container.
+   phoenix:
+      # The build parameters for this container.
+      build:
+         # Here we define that it should build from the current directory.
+         context: .
+      environment:
+         # Variables to connect to our Postgres server.
+         DATABASE_URL: ecto://postgres:postgres@db:5432/apollo
+         MIX_ENV: prod
+         PHX_HOST: 64.226.125.225
+         SECRET_KEY_BASE: 50Ek5r7GwQlQCJlFi5y+O5Mmq0z/qHMRirG7IEim7w1B7H0fxnegANr0bRe26bE3
+         PORT: 80
+      ports:
+         # Mapping the port to make the Phoenix app accessible outside of the container.
+         - '80:80'
+      depends_on:
+         # The DB container needs to be started before we start this container.
+         - db
+      links:
+        - db
+   db:
+      # We use the predefined Postgres image.
+      image: postgres:9.6
+      environment:
+         # Set user/password for Postgres.
+         POSTGRES_USER: postgres
+         POSTGRES_PASSWORD: postgres
+         # Set a path where Postgres should store the data.
+         PGDATA: /var/lib/postgresql/data/pgdata
+      ports:
+        - '5432:5432'
+      restart: always
+      volumes:
+         - pgdata:/var/lib/postgresql/data
+# Define the volumes.
+volumes:
+   pgdata:
