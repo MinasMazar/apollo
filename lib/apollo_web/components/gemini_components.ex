@@ -46,9 +46,9 @@ defmodule ApolloWeb.GeminiComponents do
     # {:ok, uri} = URI.new(%URI{path: "/", query: query})
     # URI.to_string(uri)
     case ApolloWeb.proxy_link(url, gmi) do
-      {:gopher, apollo_url} -> "<a class=\"py-0.5\" href=\"#{apollo_url}\">🚜 #{title}</a>"
-      {:gemini, _apollo_url} -> "<span class=\"py-0.5 cursor-pointer\" phx-click=\"navigate\" phx-value-url=\"#{url}\">🚀 #{title}</span>"
-      {_, url} -> "<a class=\"py-0.5\" href=\"#{url}\" target=\"_blank\">🌐 #{title}</a>"
+      {:http, url} -> "<a class=\"py-0.5\" href=\"#{url}\" target=\"_blank\">#{title}</a>"
+      {:gemini, _apollo_url} -> "<span class=\"py-0.5 cursor-pointer hover:bg-zinc-50 hover:text-zinc-900\" phx-click=\"navigate\" phx-value-url=\"#{url}\">=> #{title}</span>"
+      {_, apollo_url} -> "<a class=\"py-0.5\" href=\"#{apollo_url}\">#{title}</a>"
       :error -> "<span class=\"py-0.5\">ERROR</span>"
     end
   end

@@ -132,12 +132,20 @@ defmodule ApolloWeb do
     sanitize_target(%{uri | scheme: document.uri.scheme || "gemini"}, document)
   end
 
-  def sanitize_target(uri = %{path: "/" <> path, host: nil}, document) do
-    sanitize_target(%{uri | host: "/" <> document.uri.host <> path}, document)
+  def sanitize_target(uri = %{host: nil}, document) do
+    sanitize_target(%{uri | host: document.uri.host}, document)
   end
 
-  def sanitize_target(uri = %{path: path, host: nil}, document) do
-    sanitize_target(%{uri | path: document.uri.path <> path, host: document.uri.host}, document)
+  def sanitize_target(uri = %{path: nil}, document) do
+    sanitize_target(%{uri | path: "/"}, document)
+  end
+
+  def sanitize_target(uri = %{path: "/" <> path, host: host}, document) when not is_nil(host) do
+    URI.new(uri)
+  end
+
+  def sanitize_target(uri = %{path: path, host: host}, document) when not is_nil(host) do
+    sanitize_target(%{uri | path: "/" <> path}, document)
   end
 
   def sanitize_target(uri, document) when is_map(uri), do: URI.new(uri)

@@ -3,7 +3,7 @@ alias A.Gemini, as: G
 alias G.Api, as: Api
 
 defmodule Apollo.IEx.Helpers do
-  @test_url "gemini://geminiprotocol.net/docs/tech-overview.gmi"
+  @test_url "gemini://cobradile.cities.yesterweb.org/index.it.gmi"
   def test_url, do: @test_url
 
   def b(url \\ test_url()), do: G.body(url, :from_api)
