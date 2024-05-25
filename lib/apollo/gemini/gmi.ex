@@ -26,7 +26,7 @@ require Logger
   end
 
   defp line_to_html(:heading, line, context = %{codeblock: false}) do
-    with [_, sharps, heading] <- Regex.run(~r[(#+)\s(.+)], line) do
+    with [_, sharps, heading] <- Regex.run(~r[(#+)\s?(.+)], line) do
       head_level = Enum.min([1, Enum.max([String.length(sharps), 6])])
       font_size = case head_level do
 	h when h >= 1 and h <= 3 -> "text-2xl"
