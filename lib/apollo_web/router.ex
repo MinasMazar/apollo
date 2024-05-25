@@ -17,7 +17,7 @@ defmodule ApolloWeb.Router do
   scope "/", ApolloWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", PageLive.Show, :show
 
     live "/visits", VisitLive.Index, :index
     live "/visits/new", VisitLive.Index, :new

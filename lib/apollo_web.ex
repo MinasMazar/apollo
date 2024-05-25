@@ -114,10 +114,10 @@ defmodule ApolloWeb do
 
   def proxy_link(url) do
     case URI.new(url) do
-      {:ok, %{scheme: "gopher"}} -> {:gopher, "/visits?" <> URI.encode_query(%{url: url})}
-      {:ok, %{scheme: "gemini"}} -> {:gemini, "/visits?" <> URI.encode_query(%{url: url})}
+      {:ok, %{scheme: nil}} -> {:gemini, "/?" <> URI.encode_query(%{url: url})}
+      {:ok, %{scheme: "gopher"}} -> {:gopher, "/?" <> URI.encode_query(%{url: url})}
+      {:ok, %{scheme: "gemini"}} -> {:gemini, "/?" <> URI.encode_query(%{url: url})}
       {:ok, %{scheme: "http" <> _}} -> {:http, url}
-      {:ok, _} -> {:other, url}
       {:error, _} -> :error
     end
   end

@@ -29,11 +29,15 @@ defmodule ApolloWeb.GeminiComponents do
   end
 
   defp line_to_html({:anchor, url, title}) do
+    # target = %{uri | scheme: "gemini"}
+    # query = URI.encode_query(%{uri: target})
+    # {:ok, uri} = URI.new(%URI{path: "/", query: query})
+    # URI.to_string(uri)
     case ApolloWeb.proxy_link(url) do
       {:gopher, url} -> "<a href=\"#{url}\">🚜 #{title}</a>"
       {:gemini, url} -> "<a href=\"#{url}\">🚀 #{title}</a>"
       {:http, url} -> "<a href=\"#{url}\" target=\"_blank\">🌐 #{title}</a>"
-      :error -> "<span>UNABLE TO PARSE LINK</span>"
+      :error -> "<span>ERROR</span>"
     end
   end
 

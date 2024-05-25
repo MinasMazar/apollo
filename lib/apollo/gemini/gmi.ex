@@ -1,14 +1,14 @@
 defmodule Apollo.Gemini.Gmi do
-  defstruct [lines: []]
+  defstruct [uri: nil, lines: []]
 
   def parse(chunks, context) when is_list(chunks) do
-    {gmi, context} = for line <- chunks, reduce: {struct(__MODULE__), context} do
-      {gmi, context} ->
+    {lines, context} = for line <- chunks, reduce: {[], context} do
+      {lines, context} ->
 	{line, context} = parse(line, context)
-	{Map.update(gmi, :lines, [], fn lines -> lines ++ [line] end), context}
+	{lines ++ [line], context}
     end
 
-    gmi
+    lines
   end
 
   def parse(line, context) when is_binary(line) do
@@ -39,10 +39,10 @@ defmodule Apollo.Gemini.Gmi do
   defp anchor_to_html(line, context) do
     with [_, url, title] <- Regex.run(~r[=>\s(.+?)\s(.+)], line),
 	 {:ok, uri} <- URI.new(url) do
-      uri =  uri
-      |> Map.update(:scheme, nil, fn scheme -> scheme || context.uri.scheme end)
-      |> Map.update(:host, nil, fn host -> host || context.uri.host end)
-      {:anchor, uri, title}
+      case URI.new(url) do
+	{:ok, uri} -> {:anchor, uri, title}
+	{:error, _} -> {:anchor, "#", "error"}
+      end
     else
       _ -> :error
     end
