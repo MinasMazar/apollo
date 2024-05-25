@@ -9,6 +9,8 @@ defmodule Apollo.Gemini.Cache do
     {:ok, %{}}
   end
 
+  def free(pid \\ __MODULE__), do: :sys.replace_state(pid, fn _ -> %{} end)
+
   def get(pid \\ __MODULE__, key) do
     GenServer.call(pid, {:get, key})
   end

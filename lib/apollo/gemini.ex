@@ -104,27 +104,44 @@ defmodule Apollo.Gemini do
     Visit.changeset(visit, attrs)
   end
 
-  def to_gmi(url) do
-    with {:ok, uri} <- URI.new(url) do
-      body = body(url, :from_api) || body(url, :from_api)
-      lines = Apollo.Gemini.Gmi.parse(body, %{uri: uri})
-      %Apollo.Gemini.Gmi{uri: uri, lines: lines}
+  def to_gmi(url) when is_binary(url) do
+    with {:ok, uri} <- URI.new(url),
+	 gmi <- %Apollo.Gemini.Gmi{uri: uri} do
+      case body(url) do
+	{:ok, body} -> %{gmi | lines: Apollo.Gemini.Gmi.parse(body, %{uri: uri})}
+	:not_found -> %{gmi | error: "Not found"}
+	{:error, error} -> %{gmi | error: "#{inspect error}"}
+      end
+    end
+  end
+
+  def body(url) do
+    with :not_found <- body(url, :from_cache) do
+      body(url, :from_api)
     else
-      _ -> raise ArgumentError, "Invalid URL #{url}"
+      {:ok, body} -> {:ok, body}
     end
   end
 
   def body(url, :from_api) do
-    with {:ok, %{response: %{status: status, body: body}}} <- Api.request(url, []),
-	 body <- normalize_body(body) do
-      if status == :not_found, do: raise(RuntimeError, "Not found!")
-      Apollo.Gemini.Cache.set(url, body)
-      body
+    case Api.request(url, []) do
+      {:ok, %{response: %{status: :not_found}}} -> :not_found
+      {:ok, %{response: %{status: :success, body: body}}} ->
+	with body <- normalize_body(body) do
+	  Apollo.Gemini.Cache.set(url, body)
+	  {:ok, body}
+	end
+      {:ok, %{response: %{status: _}}} -> {:error, :unknown_status}
+      other -> {:error, other}
     end
   end
 
   def body(url, :from_cache) do
-    Apollo.Gemini.Cache.get(url)
+    if body = Apollo.Gemini.Cache.get(url) do
+      {:ok, body}
+    else
+      :not_found
+    end
   end
 
   defp normalize_body(body) do

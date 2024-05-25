@@ -16,6 +16,14 @@ defmodule ApolloWeb.GeminiComponents do
     """
   end
 
+  attr :location, :string
+  slot :inner_block
+  def back_button(assigns) do
+    ~H"""
+    <span :if={@location} phx-click="back" class="cursor-pointer"><%= render_slot(@inner_block) %> (<%= @location %>)</span>
+    """
+  end
+
   defp line_to_html({:heading, level, heading}, _gmi) do
     font_size = case level do
 		  1 -> "text-3xl"
@@ -28,15 +36,19 @@ defmodule ApolloWeb.GeminiComponents do
     "<div class=\"#{font_size} py-2\">#{heading}</div>"
   end
 
+  defp line_to_html({:anchor, :error, line}, gmi) do
+    "<span>invalid link #{line}</span>"
+  end
+
   defp line_to_html({:anchor, url, title}, gmi) do
     # target = %{uri | scheme: "gemini"}
     # query = URI.encode_query(%{uri: target})
     # {:ok, uri} = URI.new(%URI{path: "/", query: query})
     # URI.to_string(uri)
     case ApolloWeb.proxy_link(url, gmi) do
-      {:gopher, url} -> "<a href=\"#{url}\">🚜 #{title}</a>"
-      {:gemini, url} -> "<a href=\"#{url}\">🚀 #{title}</a>"
-      {:http, url} -> "<a href=\"#{url}\" target=\"_blank\">🌐 #{title}</a>"
+      {:gopher, apollo_url} -> "<a href=\"#{apollo_url}\">🚜 #{title}</a>"
+      {:gemini, _apollo_url} -> "<span class=\"cursor-pointer\" phx-click=\"navigate\" phx-value-url=\"#{url}\">🚀 #{title}</span>"
+      {_, url} -> "<a href=\"#{url}\" target=\"_blank\">🌐 #{title}</a>"
       :error -> "<span>ERROR</span>"
     end
   end

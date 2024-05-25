@@ -4,13 +4,15 @@
 </.form>
 
 <.header>
-  <%= @status %>
-  <:subtitle>subtitle</:subtitle>
   <:actions>
-    <.back :if={@back} navigate={@back}>Back to visits (<%= @back %>)</.back>    
+    <.back_button location={@back}>🔙 Back</.back_button>
+    <.link patch={~p"/"}>🏠Home</.link>
   </:actions>
 </.header>
 
 <div :if={@document} class="m-4 p-4 border">
+  <div :if={@document.error}>
+    Error: <%= inspect @document.error %>
+  </div>
   <.gmi document={@document} />
 </div>

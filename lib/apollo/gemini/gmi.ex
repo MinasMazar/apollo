@@ -1,5 +1,5 @@
 defmodule Apollo.Gemini.Gmi do
-  defstruct [uri: nil, lines: []]
+  defstruct [uri: nil, lines: [], error: nil]
 
   def parse(chunks, context) when is_list(chunks) do
     {lines, context} = for line <- chunks, reduce: {[], context} do
@@ -10,7 +10,7 @@ defmodule Apollo.Gemini.Gmi do
 
     lines
   end
-
+require Logger
   def parse(line, context) when is_binary(line) do
     line = case String.slice(line, 0, 3) do
 	     "#" <> _ -> heading_to_html(line)
@@ -32,19 +32,21 @@ defmodule Apollo.Gemini.Gmi do
       end
       {:heading, head_level, heading}
     else
-      _ -> :error
+      _ -> {:error, line}
     end
   end
 
   defp anchor_to_html(line, context) do
-    with [_, url, title] <- Regex.run(~r[=>\s(.+?)\s(.+)], line),
+    result = with [_, url, title] <- Regex.run(~r[^=>\s(.+?)\s(.+)], line) do
+	       {url, title}
+	     else
+	       _ -> :error
+	     end
+    with {url, title} <- result,
 	 {:ok, uri} <- URI.new(url) do
-      case URI.new(url) do
-	{:ok, uri} -> {:anchor, uri, title}
-	{:error, _} -> {:anchor, "#", "error"}
-      end
+      {:anchor, uri, title}
     else
-      _ -> :error
+      _ -> {:anchor, :error, line}
     end
   end
 

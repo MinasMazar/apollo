@@ -116,23 +116,28 @@ defmodule ApolloWeb do
     base_url = ApolloWeb.Endpoint.url() <> "?"
     case sanitize_target(url, document) do
       {:ok, %{scheme: "http" <> _}} -> {:http, url}
-      {:ok, target} -> {String.to_atom(target.scheme), base_url <> URI.encode_query(%{url: URI.to_string(target)})}
+      {:ok, target} -> # unless target.scheme, do: raise "#{inspect target}"
+      {String.to_atom(target.scheme), base_url <> URI.encode_query(%{url: URI.to_string(target)})}
       {:error, _} -> :error
     end
   end
 
-  defp sanitize_target(uri = %{scheme: nil}, document) do
-    sanitize_target(%{uri | scheme: document.uri.scheme}, document)
+  def sanitize_target(url, document) when is_binary(url) do
+    with {:ok, uri} <- URI.new(url), do: sanitize_target(uri, document)
   end
 
-  defp sanitize_target(uri = %{path: "/" <> _, host: nil}, document) do
+  def sanitize_target(uri = %{scheme: nil}, document) do
+    sanitize_target(%{uri | scheme: document.uri.scheme || "gemini"}, document)
+  end
+
+  def sanitize_target(uri = %{path: "/" <> _, host: nil}, document) do
     sanitize_target(%{uri | host: document.uri.host}, document)
   end
 
-  defp sanitize_target(uri = %{path: path, host: nil}, document) do
+  def sanitize_target(uri = %{path: path, host: nil}, document) do
     sanitize_target(%{uri | path: "/" <> path, host: document.uri.host}, document)
   end
 
-  defp sanitize_target(uri, document), do: URI.new(uri)
+  def sanitize_target(uri, document) when is_map(uri), do: URI.new(uri)
 end
 
