@@ -1,15 +1,3 @@
-<.form>
-  <.input name="url" value={@document && @document.uri} />
-  <.button hidden="true" type="submit">Visit!</.button>
-</.form>
-
-<.header>
-  <:actions>
-    <.back_button location={@back}>🔙 Back</.back_button>
-    <.link patch={~p"/"}>🏠Home</.link>
-  </:actions>
-</.header>
-
 <div :if={@document} class="m-4 p-4 border">
   <div :if={@document.error}>
     Error: <%= inspect @document.error %>

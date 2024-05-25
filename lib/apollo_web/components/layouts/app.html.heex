@@ -1,5 +1,17 @@
 <header class="px-4 sm:px-6 lg:px-8">
-  <div class="flex items-center justify-between border-b border-zinc-100 py-3 text-sm">
+  <div class="flex justify-between space-x-4 border-b border-zinc-100 py-3 text-sm">
+    <div class="w-1-/12">
+      <.back_button location={@back}>🔙 Back</.back_button>
+    </div>
+    <div class="w-10/12">
+      <.form>
+	<.input name="url" value={@document && @document.uri} />
+	<.button hidden="true" type="submit">Visit!</.button>
+      </.form>
+    </div>
+    <div class="flex items-center">
+      <.link patch={~p"/"}>🏠Home</.link>
+    </div>
   </div>
 </header>
 

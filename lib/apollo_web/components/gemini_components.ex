@@ -20,7 +20,7 @@ defmodule ApolloWeb.GeminiComponents do
   slot :inner_block
   def back_button(assigns) do
     ~H"""
-    <span :if={@location} phx-click="back" class="cursor-pointer"><%= render_slot(@inner_block) %> (<%= @location %>)</span>
+    <span :if={@location} phx-click="navigate" phx-value-url={@location} class="cursor-pointer">🔙</span>
     """
   end
 
