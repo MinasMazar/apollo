@@ -29,6 +29,7 @@ defmodule Apollo.Gemini.Api do
          :ok <- :ssl.send(socket, path),
          {:ok, body} <- recv(socket, ""),
          response <- prepare_response(body) do
+      Logger.debug("#{__MODULE__} response with status #{response.status}, header #{response.head}, meta #{response.meta}")
       {:ok, %{request: uri2str(uri, opts[:query]), response: response}}
     end
   end
@@ -59,7 +60,7 @@ defmodule Apollo.Gemini.Api do
     [status | meta] = String.split(head, " ")
     status = Status.from_code(status)
 
-    %{status: status, body: chunks, meta: Enum.join(meta, " ")}
+    %{status: status, head: head, body: chunks, meta: Enum.join(meta, " ")}
   end
 
   def uri2str(uri, nil), do: URI.to_string(uri)

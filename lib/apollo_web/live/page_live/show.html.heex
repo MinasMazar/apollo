@@ -1,5 +1,10 @@
+<.form>
+  <.input name="url" value={@document && @document.uri} />
+  <.button hidden="true" type="submit">Visit!</.button>
+</.form>
+
 <.header>
-  Visit <%= @document.uri %>
+  <%= @status %>
   <:subtitle>subtitle</:subtitle>
   <:actions>
     <.back :if={@back} navigate={@back}>Back to visits (<%= @back %>)</.back>    

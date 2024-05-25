@@ -106,7 +106,7 @@ defmodule Apollo.Gemini do
 
   def to_gmi(url) do
     with {:ok, uri} <- URI.new(url) do
-      body = body(url, :from_cache) || body(url, :from_api)
+      body = body(url, :from_api) || body(url, :from_api)
       lines = Apollo.Gemini.Gmi.parse(body, %{uri: uri})
       %Apollo.Gemini.Gmi{uri: uri, lines: lines}
     else
@@ -117,6 +117,7 @@ defmodule Apollo.Gemini do
   def body(url, :from_api) do
     with {:ok, %{response: %{status: status, body: body}}} <- Api.request(url, []),
 	 body <- normalize_body(body) do
+      if status == :not_found, do: raise(RuntimeError, "Not found!")
       Apollo.Gemini.Cache.set(url, body)
       body
     end

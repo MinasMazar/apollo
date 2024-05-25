@@ -5,17 +5,20 @@ defmodule ApolloWeb.PageLive.Show do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, document: nil, back: nil)}
+    {:ok, assign(socket, status: "", document: nil, back: nil)}
   end
 
   @impl true
   def handle_params(%{"url" => url}, _, socket) do
-    gmi = Gemini.to_gmi(url)
-
-    {:noreply,
-     socket
-     |> assign(:page_title, "SHOW")
-     |> assign(:document, gmi)}
+    try do
+      gmi = Gemini.to_gmi(url)
+      {:noreply,
+       socket
+       |> assign(:status, gmi.uri.path)
+       |> assign(:document, gmi)}
+    rescue
+      error -> {:noreply, assign(socket, :status, inspect(error.message))}
+    end
   end
 
   @homepage "gemini://geminiprotocol.net/"
