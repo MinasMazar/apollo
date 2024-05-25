@@ -1,4 +1,4 @@
-defmodule ApolloWeb.VisitLive.FormComponent do
+defmodule ApolloWeb.BookmarkLive.FormComponent do
   use ApolloWeb, :live_component
 
   alias Apollo.Gemini
@@ -9,19 +9,19 @@ defmodule ApolloWeb.VisitLive.FormComponent do
     <div>
       <.header>
         <%= @title %>
-        <:subtitle>Use this form to manage visit records in your database.</:subtitle>
+        <:subtitle>Use this form to manage bookmark records in your database.</:subtitle>
       </.header>
 
       <.simple_form
         for={@form}
-        id="visit-form"
+        id="bookmark-form"
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
       >
         <.input field={@form[:url]} type="text" label="Url" />
         <:actions>
-          <.button phx-disable-with="Saving...">Save Visit</.button>
+          <.button phx-disable-with="Saving...">Save Bookmark</.button>
         </:actions>
       </.simple_form>
     </div>
@@ -29,8 +29,8 @@ defmodule ApolloWeb.VisitLive.FormComponent do
   end
 
   @impl true
-  def update(%{visit: visit} = assigns, socket) do
-    changeset = Gemini.change_visit(visit)
+  def update(%{bookmark: bookmark} = assigns, socket) do
+    changeset = Gemini.change_bookmark(bookmark)
 
     {:ok,
      socket
@@ -39,27 +39,27 @@ defmodule ApolloWeb.VisitLive.FormComponent do
   end
 
   @impl true
-  def handle_event("validate", %{"visit" => visit_params}, socket) do
+  def handle_event("validate", %{"bookmark" => bookmark_params}, socket) do
     changeset =
-      socket.assigns.visit
-      |> Gemini.change_visit(visit_params)
+      socket.assigns.bookmark
+      |> Gemini.change_bookmark(bookmark_params)
       |> Map.put(:action, :validate)
 
     {:noreply, assign_form(socket, changeset)}
   end
 
-  def handle_event("save", %{"visit" => visit_params}, socket) do
-    save_visit(socket, socket.assigns.action, visit_params)
+  def handle_event("save", %{"bookmark" => bookmark_params}, socket) do
+    save_bookmark(socket, socket.assigns.action, bookmark_params)
   end
 
-  defp save_visit(socket, :edit, visit_params) do
-    case Gemini.update_visit(socket.assigns.visit, visit_params) do
-      {:ok, visit} ->
-        notify_parent({:saved, visit})
+  defp save_bookmark(socket, :edit, bookmark_params) do
+    case Gemini.update_bookmark(socket.assigns.bookmark, bookmark_params) do
+      {:ok, bookmark} ->
+        notify_parent({:saved, bookmark})
 
         {:noreply,
          socket
-         |> put_flash(:info, "Visit updated successfully")
+         |> put_flash(:info, "Bookmark updated successfully")
          |> push_patch(to: socket.assigns.patch)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -67,14 +67,14 @@ defmodule ApolloWeb.VisitLive.FormComponent do
     end
   end
 
-  defp save_visit(socket, :new, visit_params) do
-    case Gemini.create_visit(visit_params) do
-      {:ok, visit} ->
-        notify_parent({:saved, visit})
+  defp save_bookmark(socket, :new, bookmark_params) do
+    case Gemini.create_bookmark(bookmark_params) do
+      {:ok, bookmark} ->
+        notify_parent({:saved, bookmark})
 
         {:noreply,
          socket
-         |> put_flash(:info, "Visit created successfully")
+         |> put_flash(:info, "Bookmark created successfully")
          |> push_patch(to: socket.assigns.patch)}
 
       {:error, %Ecto.Changeset{} = changeset} ->

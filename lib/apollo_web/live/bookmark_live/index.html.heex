@@ -1,0 +1,41 @@
+<.header>
+  Listing Bookmarks
+  <:actions>
+    <.link patch={~p"/bookmarks/new"}>
+      <.button>New Bookmark</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="bookmarks"
+  rows={@streams.bookmarks}
+  row_click={fn {_id, bookmark} -> JS.navigate(~p"/?url=#{bookmark.url}") end}
+>
+  <:col :let={{_id, bookmark}} label="Url"><%= bookmark.url %></:col>
+  <:action :let={{_id, bookmark}}>
+    <div class="sr-only">
+      <.link navigate={~p"/bookmarks/#{bookmark}"}>Show</.link>
+    </div>
+    <.link patch={~p"/bookmarks/#{bookmark}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, bookmark}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: bookmark.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="bookmark-modal" show on_cancel={JS.patch(~p"/bookmarks")}>
+  <.live_component
+    module={ApolloWeb.BookmarkLive.FormComponent}
+    id={@bookmark.id || :new}
+    title={@page_title}
+    action={@live_action}
+    bookmark={@bookmark}
+    patch={~p"/bookmarks"}
+  />
+</.modal>

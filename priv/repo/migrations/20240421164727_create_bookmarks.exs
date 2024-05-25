@@ -1,8 +1,8 @@
-defmodule Apollo.Repo.Migrations.CreateVisits do
+defmodule Apollo.Repo.Migrations.CreateBookmarks do
   use Ecto.Migration
 
   def change do
-    create table(:visits) do
+    create table(:bookmarks) do
       add :url, :string
 
       timestamps(type: :utc_datetime)

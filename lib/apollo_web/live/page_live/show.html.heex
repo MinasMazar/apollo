@@ -1,0 +1,6 @@
+<div :if={@document} class="m-4 p-4 border">
+  <div :if={@document.error}>
+    Error: <%= inspect @document.error %>
+  </div>
+  <.gmi document={@document} />
+</div>

@@ -47,4 +47,10 @@ defmodule Apollo.Gemini.Api.Status do
 
   def from_name(atom) when is_atom(atom), do: @codes[atom] || :invalid
   def from_name(_), do: :invalid
+
+  def redirect?(response) do
+    with status <- response.status do
+      status == :temporary_redirect || status == :permanent_redirect
+    end
+  end
 end

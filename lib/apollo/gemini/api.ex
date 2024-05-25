@@ -8,20 +8,19 @@ defmodule Apollo.Gemini.Api do
   """
 
   alias Apollo.Gemini.Api.Status
+  require Logger
 
   def request(path, opts) do
     opts = Keyword.put_new(opts, :timeout, :timer.seconds(5))
 
     case URI.parse(path) do
-      %{scheme: "gemini"} = path ->
-        gemini_request(path, opts)
-
-      _ ->
-        {:error, :invalid_scheme}
+      %{scheme: "gemini"} = path -> gemini_request(path, opts)
+      %{scheme: scheme} -> {:error, :invalid_scheme, scheme}
     end
   end
 
   def gemini_request(uri, opts) do
+    Logger.info("#{__MODULE__} fetch Gemini resource: #{uri} with options #{inspect opts}")
     ssl_opts = prepare_opts(opts)
 
     with {host, path, port} = handle_uri(uri, opts[:query]),
@@ -30,7 +29,13 @@ defmodule Apollo.Gemini.Api do
          :ok <- :ssl.send(socket, path),
          {:ok, body} <- recv(socket, ""),
          response <- prepare_response(body) do
-      {:ok, %{request: uri2str(uri, opts[:query]), response: response}}
+      Logger.debug("#{__MODULE__} response with status #{response.status}, header #{response.head}, meta #{response.meta}")
+      if Status.redirect?(response) do
+	Logger.debug("#{__MODULE__} handling redirect #{inspect opts}")
+	request(response.meta, opts)
+      else
+	{:ok, %{request: uri2str(uri, opts[:query]), response: response}}
+      end
     end
   end
 
@@ -59,9 +64,8 @@ defmodule Apollo.Gemini.Api do
     [head | chunks] = String.split(raw, "\r\n")
     [status | meta] = String.split(head, " ")
     status = Status.from_code(status)
-    body = Enum.join(chunks, "\n")
 
-    %{status: status, body: body, meta: Enum.join(meta, " ")}
+    %{status: status, head: head, body: chunks, meta: Enum.join(meta, " ")}
   end
 
   def uri2str(uri, nil), do: URI.to_string(uri)

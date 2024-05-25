@@ -5,16 +5,16 @@ defmodule Apollo.GeminiFixtures do
   """
 
   @doc """
-  Generate a visit.
+  Generate a bookmark.
   """
-  def visit_fixture(attrs \\ %{}) do
-    {:ok, visit} =
+  def bookmark_fixture(attrs \\ %{}) do
+    {:ok, bookmark} =
       attrs
       |> Enum.into(%{
         url: "some url"
       })
-      |> Apollo.Gemini.create_visit()
+      |> Apollo.Gemini.create_bookmark()
 
-    visit
+    bookmark
   end
 end

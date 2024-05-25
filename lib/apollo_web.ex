@@ -85,6 +85,8 @@ defmodule ApolloWeb do
       import Phoenix.HTML
       # Core UI components and translation
       import ApolloWeb.CoreComponents
+      import ApolloWeb.Helpers
+      import ApolloWeb.GeminiComponents
       import ApolloWeb.Gettext
 
       # Shortcut for generating JS commands
@@ -110,4 +112,43 @@ defmodule ApolloWeb do
   defmacro __using__(which) when is_atom(which) do
     apply(__MODULE__, which, [])
   end
+
+  def proxy_link(url, document) do
+    base_url = ApolloWeb.Endpoint.url() <> "?"
+    case sanitize_target(url, document) do
+      {:ok, %{scheme: "http" <> _}} -> {:http, url}
+      {:ok, target} ->
+	{String.to_atom(target.scheme), base_url <> URI.encode_query(%{url: URI.to_string(target)})}
+      {:error, _} -> :error
+    end
+  end
+
+  def sanitize_target(url, document) when is_binary(url) do
+    with {:ok, uri} <- URI.new(url) do
+      sanitize_target(uri, document)
+    end
+  end
+
+  def sanitize_target(uri = %{scheme: nil}, document) do
+    sanitize_target(%{uri | scheme: document.uri.scheme || "gemini"}, document)
+  end
+
+  def sanitize_target(uri = %{host: nil}, document) do
+    sanitize_target(%{uri | host: document.uri.host}, document)
+  end
+
+  def sanitize_target(uri = %{path: nil}, document) do
+    sanitize_target(%{uri | path: "/"}, document)
+  end
+
+  def sanitize_target(uri = %{path: "/" <> path, host: host}, document) when not is_nil(host) do
+    URI.new(uri)
+  end
+
+  def sanitize_target(uri = %{path: path, host: host}, document) when not is_nil(host) do
+    sanitize_target(%{uri | path: "/" <> path}, document)
+  end
+
+  def sanitize_target(uri, document) when is_map(uri), do: URI.new(uri)
 end
+

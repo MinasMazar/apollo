@@ -17,14 +17,14 @@ defmodule ApolloWeb.Router do
   scope "/", ApolloWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", PageLive.Show, :show
 
-    live "/visits", VisitLive.Index, :index
-    live "/visits/new", VisitLive.Index, :new
-    live "/visits/:id/edit", VisitLive.Index, :edit
+    live "/bookmarks", BookmarkLive.Index, :index
+    live "/bookmarks/new", BookmarkLive.Index, :new
+    live "/bookmarks/:id/edit", BookmarkLive.Index, :edit
 
-    live "/visits/:id", VisitLive.Show, :show
-    live "/visits/:id/show/edit", VisitLive.Show, :edit
+    live "/bookmarks/:id", BookmarkLive.Show, :show
+    live "/bookmarks/:id/show/edit", BookmarkLive.Show, :edit
   end
 
   # Other scopes may use custom stacks.

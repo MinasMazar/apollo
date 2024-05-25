@@ -3,57 +3,57 @@ defmodule Apollo.GeminiTest do
 
   alias Apollo.Gemini
 
-  describe "visits" do
-    alias Apollo.Gemini.Visit
+  describe "bookmarks" do
+    alias Apollo.Gemini.Bookmark
 
     import Apollo.GeminiFixtures
 
     @invalid_attrs %{url: nil}
 
-    test "list_visits/0 returns all visits" do
-      visit = visit_fixture()
-      assert Gemini.list_visits() == [visit]
+    test "list_bookmarks/0 returns all bookmarks" do
+      bookmark = bookmark_fixture()
+      assert Gemini.list_bookmarks() == [bookmark]
     end
 
-    test "get_visit!/1 returns the visit with given id" do
-      visit = visit_fixture()
-      assert Gemini.get_visit!(visit.id) == visit
+    test "get_bookmark!/1 returns the bookmark with given id" do
+      bookmark = bookmark_fixture()
+      assert Gemini.get_bookmark!(bookmark.id) == bookmark
     end
 
-    test "create_visit/1 with valid data creates a visit" do
+    test "create_bookmark/1 with valid data creates a bookmark" do
       valid_attrs = %{url: "some url"}
 
-      assert {:ok, %Visit{} = visit} = Gemini.create_visit(valid_attrs)
-      assert visit.url == "some url"
+      assert {:ok, %Bookmark{} = bookmark} = Gemini.create_bookmark(valid_attrs)
+      assert bookmark.url == "some url"
     end
 
-    test "create_visit/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Gemini.create_visit(@invalid_attrs)
+    test "create_bookmark/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Gemini.create_bookmark(@invalid_attrs)
     end
 
-    test "update_visit/2 with valid data updates the visit" do
-      visit = visit_fixture()
+    test "update_bookmark/2 with valid data updates the bookmark" do
+      bookmark = bookmark_fixture()
       update_attrs = %{url: "some updated url"}
 
-      assert {:ok, %Visit{} = visit} = Gemini.update_visit(visit, update_attrs)
-      assert visit.url == "some updated url"
+      assert {:ok, %Bookmark{} = bookmark} = Gemini.update_bookmark(bookmark, update_attrs)
+      assert bookmark.url == "some updated url"
     end
 
-    test "update_visit/2 with invalid data returns error changeset" do
-      visit = visit_fixture()
-      assert {:error, %Ecto.Changeset{}} = Gemini.update_visit(visit, @invalid_attrs)
-      assert visit == Gemini.get_visit!(visit.id)
+    test "update_bookmark/2 with invalid data returns error changeset" do
+      bookmark = bookmark_fixture()
+      assert {:error, %Ecto.Changeset{}} = Gemini.update_bookmark(bookmark, @invalid_attrs)
+      assert bookmark == Gemini.get_bookmark!(bookmark.id)
     end
 
-    test "delete_visit/1 deletes the visit" do
-      visit = visit_fixture()
-      assert {:ok, %Visit{}} = Gemini.delete_visit(visit)
-      assert_raise Ecto.NoResultsError, fn -> Gemini.get_visit!(visit.id) end
+    test "delete_bookmark/1 deletes the bookmark" do
+      bookmark = bookmark_fixture()
+      assert {:ok, %Bookmark{}} = Gemini.delete_bookmark(bookmark)
+      assert_raise Ecto.NoResultsError, fn -> Gemini.get_bookmark!(bookmark.id) end
     end
 
-    test "change_visit/1 returns a visit changeset" do
-      visit = visit_fixture()
-      assert %Ecto.Changeset{} = Gemini.change_visit(visit)
+    test "change_bookmark/1 returns a bookmark changeset" do
+      bookmark = bookmark_fixture()
+      assert %Ecto.Changeset{} = Gemini.change_bookmark(bookmark)
     end
   end
 end
