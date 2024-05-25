@@ -58,7 +58,6 @@ require Logger
     end
   end
 
-
   defp line_to_html(:empty, line, context= %{codeblock: false}) do
     {{:line, ""}, context}
   end

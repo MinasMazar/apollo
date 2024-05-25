@@ -109,7 +109,7 @@ defmodule Apollo.Gemini do
 	 gmi <- %Apollo.Gemini.Gmi{uri: uri} do
       case body(url) do
 	{:ok, body} -> %{gmi | lines: Apollo.Gemini.Gmi.parse(body, %{uri: uri})}
-	:not_found -> %{gmi | error: "Not found"}
+	:not_found -> %{gmi | error: :not_found}
 	{:error, error} -> %{gmi | error: "#{inspect error}"}
       end
     end
