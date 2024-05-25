@@ -12,7 +12,7 @@ services:
          context: .
       environment:
          # Variables to connect to our Postgres server.
-         DATABASE_URL: ecto://postgres:postgres@db:5432/apollo
+         DATABASE_URL: ecto://postgres:postgres@db:5432/apollo?ssl=true&sslmode=require
          MIX_ENV: prod
          PHX_HOST: 64.226.125.225
          SECRET_KEY_BASE: 50Ek5r7GwQlQCJlFi5y+O5Mmq0z/qHMRirG7IEim7w1B7H0fxnegANr0bRe26bE3
