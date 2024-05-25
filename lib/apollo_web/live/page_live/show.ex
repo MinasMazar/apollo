@@ -5,7 +5,7 @@ defmodule ApolloWeb.PageLive.Show do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, gmi: nil, url: nil, back: nil)}
+    {:ok, assign(socket, gmi: nil, url: nil)}
   end
 
   @impl true
@@ -16,8 +16,8 @@ defmodule ApolloWeb.PageLive.Show do
     {:noreply,
      socket
      |> assign(:page_title, "SHOW")
+     |> assign(:visit, visit)
      |> assign(:url, url)
-     |> assign(:back, socket.assigns.back || url)
      |> assign(:gmi, gmi)}
   end
 

@@ -114,7 +114,7 @@ defmodule Apollo.Gemini do
   end
 
   def to_gmi(visit) do
-    body = visit.body || body(visit, :from_cache) || body(visit, :from_api)
+    body = visit.body || body(visit, :from_api) || body(visit, :from_api)
     uri = Visit.uri(visit)
     lines = Apollo.Gemini.Gmi.parse(body, %{uri: uri})
     %Apollo.Gemini.Gmi{uri: uri, lines: lines}

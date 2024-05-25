@@ -15,8 +15,7 @@ defmodule Apollo.Gemini.Api do
 
     case URI.parse(path) do
       %{scheme: "gemini"} = path -> gemini_request(path, opts)
-      _ ->
-        {:error, :invalid_scheme}
+      %{scheme: scheme} -> {:error, :invalid_scheme, scheme}
     end
   end
 
