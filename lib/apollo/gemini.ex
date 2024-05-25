@@ -35,17 +35,8 @@ defmodule Apollo.Gemini do
       ** (Ecto.NoResultsError)
 
   """
-  def new(url) do
-    visit = %Visit{url: url}
-    visit
-    |> Map.put(:gmi, to_gmi(visit))
-  end
-
   def get_visit!(id) do
-    if visit = Repo.get!(Visit, id) do
-      visit
-      |> Map.put(:gmi, to_gmi(visit))
-    end
+    Repo.get!(Visit, id)
   end
 
   @doc """
@@ -113,23 +104,26 @@ defmodule Apollo.Gemini do
     Visit.changeset(visit, attrs)
   end
 
-  def to_gmi(visit) do
-    body = visit.body || body(visit, :from_api) || body(visit, :from_api)
-    uri = Visit.uri(visit)
-    lines = Apollo.Gemini.Gmi.parse(body, %{uri: uri})
-    %Apollo.Gemini.Gmi{uri: uri, lines: lines}
+  def to_gmi(url) do
+    with {:ok, uri} <- URI.new(url) do
+      body = body(url, :from_cache) || body(url, :from_api)
+      lines = Apollo.Gemini.Gmi.parse(body, %{uri: uri})
+      %Apollo.Gemini.Gmi{uri: uri, lines: lines}
+    else
+      _ -> raise ArgumentError, "Invalid URL #{url}"
+    end
   end
 
-  def body(visit, :from_api) do
-    with {:ok, %{response: %{status: status, body: body}}} <- Api.request(visit.url, []),
+  def body(url, :from_api) do
+    with {:ok, %{response: %{status: status, body: body}}} <- Api.request(url, []),
 	 body <- normalize_body(body) do
-      Apollo.Gemini.Cache.set(visit.url, body)
+      Apollo.Gemini.Cache.set(url, body)
       body
     end
   end
 
-  def body(visit, :from_cache) do
-    Apollo.Gemini.Cache.get(visit.url)
+  def body(url, :from_cache) do
+    Apollo.Gemini.Cache.get(url)
   end
 
   defp normalize_body(body) do

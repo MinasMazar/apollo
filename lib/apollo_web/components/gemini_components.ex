@@ -5,18 +5,18 @@ defmodule ApolloWeb.GeminiComponents do
   import Phoenix.HTML
   import ApolloWeb.Gettext
 
-  attr :lines, :list
+  attr :document, :map
 
   def gmi(assigns) do
     ~H"""
-    <p :for={line <- @lines} class="py-1">
+    <p :for={line <- @document.lines} class="py-1">
       <%#= inspect line %>
-      <%= raw(line_to_html(line)) %>
+      <%= raw(line_to_html(line, @document)) %>
     </p>
     """
   end
 
-  defp line_to_html({:heading, level, heading}) do
+  defp line_to_html({:heading, level, heading}, _gmi) do
     font_size = case level do
 		  1 -> "text-3xl"
 		  2 -> "text-2xl"
@@ -28,12 +28,12 @@ defmodule ApolloWeb.GeminiComponents do
     "<div class=\"#{font_size} py-2\">#{heading}</div>"
   end
 
-  defp line_to_html({:anchor, url, title}) do
+  defp line_to_html({:anchor, url, title}, gmi) do
     # target = %{uri | scheme: "gemini"}
     # query = URI.encode_query(%{uri: target})
     # {:ok, uri} = URI.new(%URI{path: "/", query: query})
     # URI.to_string(uri)
-    case ApolloWeb.proxy_link(url) do
+    case ApolloWeb.proxy_link(url, gmi) do
       {:gopher, url} -> "<a href=\"#{url}\">🚜 #{title}</a>"
       {:gemini, url} -> "<a href=\"#{url}\">🚀 #{title}</a>"
       {:http, url} -> "<a href=\"#{url}\" target=\"_blank\">🌐 #{title}</a>"
@@ -41,14 +41,14 @@ defmodule ApolloWeb.GeminiComponents do
     end
   end
 
-  defp line_to_html({:code, flag}) do
+  defp line_to_html({:code, flag}, _gmi) do
     if flag, do: "<code>", else: "</code>"
   end
 
-  defp line_to_html({:quote, line}) do
+  defp line_to_html({:quote, line}, _gmi) do
     "<blockquote><tt>#{line}</tt></blockquote>"
   end
 
-  defp line_to_html({:line, :empty}), do: "<br>"
-  defp line_to_html({:line, line}), do: "<span>#{line}</span>"
+  defp line_to_html({:line, :empty}, _gmi), do: "<br>"
+  defp line_to_html({:line, line}, _gmi), do: "<span>#{line}</span>"
 end

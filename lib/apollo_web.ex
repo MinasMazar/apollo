@@ -112,20 +112,21 @@ defmodule ApolloWeb do
     apply(__MODULE__, which, [])
   end
 
-  def proxy_link(url, context \\ %{}) do
+  def proxy_link(url, document) do
     base_url = ApolloWeb.Endpoint.url() <> "?"
     case URI.new(url) do
       {:ok, %{scheme: nil, path: path, host: host}} ->
-	{:ok, target} = URI.new(%URI{scheme: "gemini", path: path, host: host})
+	{:ok, target} = URI.new(%URI{scheme: "gemini", path: path, host: host || document.uri.host})
 	{:gemini, base_url <> URI.encode_query(%{url: URI.to_string(target)})}
       {:ok, %{scheme: "gopher", path: path, host: host}} ->
-	{:ok, target} = URI.new(%URI{scheme: "gopher", path: path, host: host})
+	{:ok, target} = URI.new(%URI{scheme: "gopher", path: path, host: host || document.uri.host})
 	{:gopher, base_url <> URI.encode_query(%{url: URI.to_string(target)})}
       {:ok, %{scheme: "gemini", path: path, host: host}} ->
-	{:ok, target} = URI.new(%URI{scheme: "gemini", path: path, host: host})
+	{:ok, target} = URI.new(%URI{scheme: "gemini", path: path, host: host || document.uri.host})
 	{:gemini, base_url <> URI.encode_query(%{url: URI.to_string(target)})}
       {:ok, %{scheme: "http" <> _}} -> {:http, url}
       {:error, _} -> :error
     end
   end
 end
+

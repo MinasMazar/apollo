@@ -1,11 +1,11 @@
 <.header>
-  Visit <%= @url %>
+  Visit <%= @document.uri %>
   <:subtitle>subtitle</:subtitle>
   <:actions>
-    <.back :if={@visit} navigate={@visit.back}>Back to visits (<%= @visit.back %>)</.back>    
+    <.back :if={@back} navigate={@back}>Back to visits (<%= @back %>)</.back>    
   </:actions>
 </.header>
 
-<div :if={@gmi} class="m-4 p-4 border">
-  <.gmi lines={@gmi.lines} />
+<div :if={@document} class="m-4 p-4 border">
+  <.gmi document={@document} />
 </div>

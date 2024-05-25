@@ -16,8 +16,4 @@ defmodule Apollo.Gemini.Visit do
     |> cast(attrs, [:url, :body, :back])
     |> validate_required([:url])
   end
-
-  def uri(visit) do
-    with {:ok, uri} <- URI.new(visit.url), do: uri, else: (_ -> raise ArgumentError)
-  end
 end
