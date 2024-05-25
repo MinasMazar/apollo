@@ -18,6 +18,13 @@ defmodule ApolloWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+
+    live "/visits", VisitLive.Index, :index
+    live "/visits/new", VisitLive.Index, :new
+    live "/visits/:id/edit", VisitLive.Index, :edit
+
+    live "/visits/:id", VisitLive.Show, :show
+    live "/visits/:id/show/edit", VisitLive.Show, :edit
   end
 
   # Other scopes may use custom stacks.
