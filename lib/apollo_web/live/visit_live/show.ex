@@ -9,11 +9,21 @@ defmodule ApolloWeb.VisitLive.Show do
   end
 
   @impl true
-  def handle_params(%{"id" => id}, _, socket) do
+  def handle_params(%{"url" => url}, _, socket) do
+    visit = %Gemini.Visit{url: url}
+    gmi = Gemini.to_gmi(visit)
+
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:visit, Gemini.get_visit!(id))}
+     |> assign(:visit, Map.put(visit, :gmi, gmi))}
+  end
+
+  def handle_params(%{"id" => id}, _, socket) do
+    visit = Gemini.get_visit!(id)
+    {:noreply,
+     socket
+     |> assign(:visit, visit)}
   end
 
   defp page_title(:show), do: "Show Visit"

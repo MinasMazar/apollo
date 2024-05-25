@@ -85,6 +85,7 @@ defmodule ApolloWeb do
       import Phoenix.HTML
       # Core UI components and translation
       import ApolloWeb.CoreComponents
+      import ApolloWeb.GeminiComponents
       import ApolloWeb.Gettext
 
       # Shortcut for generating JS commands
@@ -109,5 +110,15 @@ defmodule ApolloWeb do
   """
   defmacro __using__(which) when is_atom(which) do
     apply(__MODULE__, which, [])
+  end
+
+  def proxy_link(url) do
+    case URI.new(url) do
+      {:ok, %{scheme: "gopher"}} -> {:gopher, "/visits?" <> URI.encode_query(%{url: url})}
+      {:ok, %{scheme: "gemini"}} -> {:gemini, "/visits?" <> URI.encode_query(%{url: url})}
+      {:ok, %{scheme: "http" <> _}} -> {:http, url}
+      {:ok, _} -> {:other, url}
+      {:error, _} -> :error
+    end
   end
 end

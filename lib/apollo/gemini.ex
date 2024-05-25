@@ -6,7 +6,7 @@ defmodule Apollo.Gemini do
   import Ecto.Query, warn: false
   alias Apollo.Repo
 
-  alias Apollo.Gemini.Visit
+  alias Apollo.Gemini.{Api, Visit}
 
   @doc """
   Returns the list of visits.
@@ -35,7 +35,18 @@ defmodule Apollo.Gemini do
       ** (Ecto.NoResultsError)
 
   """
-  def get_visit!(id), do: Repo.get!(Visit, id)
+  def new(url) do
+    visit = %Visit{url: url}
+    visit
+    |> Map.put(:gmi, to_gmi(visit))
+  end
+
+  def get_visit!(id) do
+    if visit = Repo.get!(Visit, id) do
+      visit
+      |> Map.put(:gmi, to_gmi(visit))
+    end
+  end
 
   @doc """
   Creates a visit.
@@ -100,5 +111,34 @@ defmodule Apollo.Gemini do
   """
   def change_visit(%Visit{} = visit, attrs \\ %{}) do
     Visit.changeset(visit, attrs)
+  end
+
+  def to_gmi(visit) do
+    body = visit.body || body(visit, :from_cache) || body(visit, :from_api)
+    uri = Visit.uri(visit)
+    Apollo.Gemini.Gmi.parse(body, %{uri: uri})
+  end
+
+  def body(visit, :from_api) do
+    with {:ok, %{response: %{status: status, body: body}}} <- Api.request(visit.url, []),
+	 body <- normalize_body(body) do
+      Apollo.Gemini.Cache.set(visit.url, body)
+      body
+    end
+  end
+
+  def body(visit, :from_cache) do
+    Apollo.Gemini.Cache.get(visit.url)
+  end
+
+  defp normalize_body(body) do
+    case body do
+      content when is_binary(content) -> String.split(content, ~r([\n|\r]))
+      [content] when is_binary(content) -> String.split(content, ~r([\n|\r]))
+      chunks when is_list(chunks) ->
+	chunks
+	|> Enum.map(fn line -> String.split(line, ~r([\n|\r])) end)
+	|> List.flatten()
+    end
   end
 end

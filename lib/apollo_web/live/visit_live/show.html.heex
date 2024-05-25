@@ -12,6 +12,10 @@
   <:item title="Url"><%= @visit.url %></:item>
 </.list>
 
+<div class="m-4 p-4 border">
+  <.gmi lines={@visit.gmi.lines} />
+</div>
+
 <.back navigate={~p"/visits"}>Back to visits</.back>
 
 <.modal :if={@live_action == :edit} id="visit-modal" show on_cancel={JS.patch(~p"/visits/#{@visit}")}>

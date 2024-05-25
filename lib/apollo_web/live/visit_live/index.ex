@@ -10,6 +10,16 @@ defmodule ApolloWeb.VisitLive.Index do
   end
 
   @impl true
+
+  def handle_params(%{"url" => url}, _, socket) do
+    visit = Gemini.new(url)
+
+    {:noreply,
+     socket
+     |> assign(:page_title, "title")
+     |> assign(:visit, visit)}
+  end
+
   def handle_params(params, _url, socket) do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end

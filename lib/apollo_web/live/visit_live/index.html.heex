@@ -7,6 +7,13 @@
   </:actions>
 </.header>
 
+<div :if={@visit}>
+  <div>URL: <%= @visit.url %></div>
+  <div class="py-4">
+    <.gmi lines={@visit.gmi.lines} />
+  </div>
+</div>
+
 <.table
   id="visits"
   rows={@streams.visits}

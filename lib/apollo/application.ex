@@ -17,7 +17,8 @@ defmodule Apollo.Application do
       # Start a worker by calling: Apollo.Worker.start_link(arg)
       # {Apollo.Worker, arg},
       # Start to serve requests, typically the last entry
-      ApolloWeb.Endpoint
+      ApolloWeb.Endpoint,
+      Apollo.Gemini.Cache
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
