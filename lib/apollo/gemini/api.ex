@@ -20,7 +20,7 @@ defmodule Apollo.Gemini.Api do
   end
 
   def gemini_request(uri, opts) do
-    Logger.info("#{__MODULE__} fetch Gemini resource: #{uri}")
+    Logger.info("#{__MODULE__} fetch Gemini resource: #{uri} with options #{inspect opts}")
     ssl_opts = prepare_opts(opts)
 
     with {host, path, port} = handle_uri(uri, opts[:query]),
@@ -30,7 +30,12 @@ defmodule Apollo.Gemini.Api do
          {:ok, body} <- recv(socket, ""),
          response <- prepare_response(body) do
       Logger.debug("#{__MODULE__} response with status #{response.status}, header #{response.head}, meta #{response.meta}")
-      {:ok, %{request: uri2str(uri, opts[:query]), response: response}}
+      if Status.redirect?(response) do
+	Logger.debug("#{__MODULE__} handling redirect #{inspect opts}")
+	request(response.meta, opts)
+      else
+	{:ok, %{request: uri2str(uri, opts[:query]), response: response}}
+      end
     end
   end
 

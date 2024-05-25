@@ -131,7 +131,12 @@ defmodule Apollo.Gemini do
 	  Apollo.Gemini.Cache.set(url, body)
 	  {:ok, body}
 	end
-      {:ok, %{response: %{status: _}}} -> {:error, :unknown_status}
+      {:ok, response} ->
+	if Api.Status.redirect?(response) do
+	  {:error, :redirected}
+	else
+	  {:error, :unknown_status}
+	end
       other -> {:error, other}
     end
   end
