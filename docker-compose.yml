@@ -4,10 +4,6 @@ version: '3'
 # Containers we're going to run.
 name: apollo
 
-networks:
-  internal:
-    external: false
-
 services:
    # Our Phoenix container.
    phoenix:
@@ -31,7 +27,8 @@ services:
          # The DB container needs to be started before we start this container.
          - db
       networks:
-        - internal
+        - outside
+        - default
    db:
       # We use the predefined Postgres image.
       image: postgres:9.6
@@ -49,8 +46,12 @@ services:
       volumes:
          - pgdata:/var/lib/postgresql/data
       networks:
-        - internal
+        - default
 
 # Define the volumes.
 volumes:
    pgdata:
+
+# Define networks
+networks:
+  outside:
