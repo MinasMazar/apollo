@@ -66,6 +66,12 @@ if config_env() == :prod do
       ip: {0, 0, 0, 0, 0, 0, 0, 0},
       port: port
     ],
+    https: [
+      port: 443,
+      cipher_suite: :compatible,
+      keyfile: System.get_env("APOLLO_SSL_KEY_PATH", "ssl/apollo.minasmazar.org-key.pem"),
+      certfile: System.get_env("APOLLO_SSL_CERT_PATH", "ssl/apollo.minasmazar.org.pem")
+    ],
     secret_key_base: secret_key_base
 
   # ## SSL Support
