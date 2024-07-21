@@ -15,7 +15,7 @@ services:
          # Variables to connect to our Postgres server.
          DATABASE_URL: ecto://postgres:postgres@db:5432/apollo
          MIX_ENV: prod
-         PHX_HOST: 64.226.125.225
+         PHX_HOST: apollo.minasmazar.org
          SECRET_KEY_BASE: 50Ek5r7GwQlQCJlFi5y+O5Mmq0z/qHMRirG7IEim7w1B7H0fxnegANr0bRe26bE3
          # APOLLO_SSL_KEY_PATH: /root/apollo/priv/ssl/apollo.minasmazar.org-key.pem
          # APOLLO_SSL_CERT_PATH: /root/apollo/priv/ssl/apollo.minasmazar.org.pem
@@ -23,6 +23,7 @@ services:
       ports:
          # Mapping the port to make the Phoenix app accessible outside of the container.
          - '80:80'
+         - '443:443'
       expose:
         - '80'
         - '443'
