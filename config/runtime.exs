@@ -69,6 +69,7 @@ if config_env() == :prod do
     https: [
       port: 443,
       cipher_suite: :compatible,
+      otp_app: :apollo,
       keyfile: System.get_env("APOLLO_SSL_KEY_PATH", "ssl/apollo.minasmazar.org-key.pem"),
       certfile: System.get_env("APOLLO_SSL_CERT_PATH", "ssl/apollo.minasmazar.org.pem")
     ],
