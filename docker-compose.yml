@@ -24,8 +24,8 @@ services:
          # Mapping the port to make the Phoenix app accessible outside of the container.
          - '80:80'
       expose:
-        - 80
-        - 443
+        - '80'
+        - '443'
       depends_on:
          # The DB container needs to be started before we start this container.
          - db
