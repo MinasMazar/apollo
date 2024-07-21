@@ -70,8 +70,8 @@ if config_env() == :prod do
       port: 443,
       cipher_suite: :compatible,
       otp_app: :apollo,
-      keyfile: System.get_env("APOLLO_SSL_KEY_PATH", "ssl/apollo.minasmazar.org-key.pem"),
-      certfile: System.get_env("APOLLO_SSL_CERT_PATH", "ssl/apollo.minasmazar.org.pem")
+      keyfile: System.get_env("APOLLO_SSL_KEY_PATH", "priv/ssl/apollo.minasmazar.org-key.pem"),
+      certfile: System.get_env("APOLLO_SSL_CERT_PATH", "priv/ssl/apollo.minasmazar.org.pem")
     ],
     secret_key_base: secret_key_base
 
