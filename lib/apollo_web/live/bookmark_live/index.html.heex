@@ -1,10 +1,5 @@
 <.header>
   Listing Bookmarks
-  <:actions>
-    <.link patch={~p"/bookmarks/new"}>
-      <.button>New Bookmark</.button>
-    </.link>
-  </:actions>
 </.header>
 
 <.table
@@ -17,15 +12,6 @@
     <div class="sr-only">
       <.link navigate={~p"/bookmarks/#{bookmark}"}>Show</.link>
     </div>
-    <.link patch={~p"/bookmarks/#{bookmark}/edit"}>Edit</.link>
-  </:action>
-  <:action :let={{id, bookmark}}>
-    <.link
-      phx-click={JS.push("delete", value: %{id: bookmark.id}) |> hide("##{id}")}
-      data-confirm="Are you sure?"
-    >
-      Delete
-    </.link>
   </:action>
 </.table>
 
