@@ -116,9 +116,9 @@ defmodule ApolloWeb do
   def proxy_link(url, document) do
     base_url = ApolloWeb.Endpoint.url() <> "?"
     case sanitize_target(url, document) do
-      {:ok, %{scheme: "http" <> _}} -> {:http, url}
-      {:ok, target} ->
-	{String.to_atom(target.scheme), base_url <> URI.encode_query(%{url: URI.to_string(target)})}
+      {:ok, %URI{scheme: "http" <> _}} -> {:http, url}
+      {:ok, target = %URI{scheme: scheme}} ->
+	{String.to_atom(scheme), base_url <> URI.encode_query(%{url: URI.to_string(target)}), URI.to_string(target)}
       {:error, _} -> :error
     end
   end
