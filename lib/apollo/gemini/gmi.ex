@@ -39,12 +39,13 @@ defmodule Apollo.Gemini.Gmi do
   end
 
   defp line_to_html(:anchor, line, context = %{codeblock: false}) do
-    result = with [_, url, title] <- Regex.run(~r[^=>\s(.+?)\s+(.+)], line) do
-	       {url, title}
-	     else
-	       [_, url] -> {url, url}
-	     _ -> :error
-	     end
+    result =
+      case Regex.run(~r[^=>\s(.+?)\s+(.+)], line) do
+	[_, url, title] -> {url, title}
+	[_, url] -> {url, url}
+	_ -> :error
+      end
+
     with {url, title} <- result,
 	 {:ok, uri} <- URI.new(url) do
       {{:anchor, uri, title}, context}

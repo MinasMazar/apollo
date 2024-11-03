@@ -146,7 +146,8 @@ defmodule ApolloWeb do
   end
 
   def sanitize_target(uri = %{path: path, host: host}, document) when not is_nil(host) do
-    sanitize_target(%{uri | path: "/" <> path}, document)
+    fullpath = document.uri.path <> "/" <> path
+    sanitize_target(%{uri | path: fullpath}, document)
   end
 
   def sanitize_target(uri, document) when is_map(uri), do: URI.new(uri)
