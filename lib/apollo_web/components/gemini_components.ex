@@ -12,20 +12,6 @@ defmodule ApolloWeb.GeminiComponents do
     """
   end
 
-  attr :history, :list
-  slot :inner_block
-  def back_button(assigns = %{history: history}) when is_list(history) do
-    last_url = Enum.at(history, 0)
-    assigns = Map.put(assigns, :last_url, last_url)
-    ~H"""
-    <span :if={@last_url} phx-click="navigate" phx-value-url={@last_url} class="cursor-pointer">🔙</span>
-    """
-  end
-
-  def back_button(assigns) do
-    back_button(Map.put(assigns, :history, []))
-  end
-
   defp line_to_html({:heading, level, heading}, _gmi) do
     font_size = case level do
 		  1 -> "text-3xl"
@@ -80,7 +66,7 @@ defmodule ApolloWeb.GeminiComponents do
     ~H"""
     <span class="hover:bg-cyan-400">
       => 
-      <.link navigate={@apollo_url} phx-click="navigate" phx-value-url={@gemini_url} class="py-0.5 cursor-pointer underline"><%= @title %></.link>
+      <.link phx-click="navigate" phx-value-url={@gemini_url} class="py-0.5 cursor-pointer underline"><%= @title %></.link>
     </span>
     """
   end
