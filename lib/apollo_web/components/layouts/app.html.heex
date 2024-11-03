@@ -4,10 +4,10 @@
       <.back_button :if={assigns[:history]} history={@history}>🔙 Back</.back_button>
     </div>
     <div class="w-10/12">
-      <.form>
+      <form for="gemini-url">
 	<.input name="url" value={@current_url} />
 	<.button hidden="true" type="submit">Bookmark!</.button>
-      </.form>
+      </form>
     </div>
     <div class="flex items-center space-x-4">
       <div><.link patch={~p"/"}>🏠 Home</.link></div>

@@ -14,16 +14,6 @@ defmodule ApolloWeb.BookmarkLive.Index do
   end
 
   @impl true
-
-  def handle_params(%{"url" => url}, _, socket) do
-    bookmark = Gemini.new(url)
-
-    {:noreply,
-     socket
-     |> assign(:page_title, "title")
-     |> assign(:bookmark, bookmark)}
-  end
-
   def handle_params(params, _url, socket) do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end

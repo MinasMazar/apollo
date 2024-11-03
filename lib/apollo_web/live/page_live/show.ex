@@ -22,6 +22,7 @@ defmodule ApolloWeb.PageLive.Show do
     handle_params(Map.merge(params, %{"url" => @homepage}), session, socket)
   end
 
+  @impl true
   def handle_event("navigate", %{"url" => url}, socket) do
     history = [socket.assigns.document.uri | socket.assigns.history]
     case ApolloWeb.sanitize_target(url, socket.assigns.document) do

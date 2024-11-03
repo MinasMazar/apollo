@@ -1,12 +1,8 @@
 defmodule ApolloWeb.GeminiComponents do
   use Phoenix.Component
-
-  alias Phoenix.LiveView.JS
   import Phoenix.HTML
-  import ApolloWeb.Gettext
 
   attr :document, :map
-
   def gmi(assigns) do
     ~H"""
     <p :for={line <- @document.lines}>
@@ -56,7 +52,7 @@ defmodule ApolloWeb.GeminiComponents do
     case ApolloWeb.proxy_link(url, gmi) do
       {:http, url} -> http_link(url: url, title: title)
       {:gemini, apollo_url, gemini_url} -> gemini_link(apollo_url: apollo_url, gemini_url: gemini_url, title: title)
-      {other, url} -> other_link(url: url, title: title)
+      {_other, url} -> other_link(url: url, title: title)
       :error -> "<span class=\"py-0.5\">ERROR</span>"
     end
   end

@@ -5,7 +5,7 @@ defmodule Apollo.Gemini.Gmi do
     context = context
     |> Map.put(:codeblock, false)
 
-    {lines, context} = for line <- chunks, reduce: {[], context} do
+    {lines, _context} = for line <- chunks, reduce: {[], context} do
       {lines, context} ->
 	{line, context} = parse(line, context)
 	{lines ++ [line], post_line_parse(context)}
@@ -28,10 +28,6 @@ defmodule Apollo.Gemini.Gmi do
   defp line_to_html(:heading, line, context = %{codeblock: false}) do
     with [_, sharps, heading] <- Regex.run(~r[(#+)\s?(.+)], line) do
       head_level = Enum.min([1, Enum.max([String.length(sharps), 6])])
-      font_size = case head_level do
-	h when h >= 1 and h <= 3 -> "text-2xl"
-	h when h > 3 -> "text-xl"
-      end
       {{:heading, head_level, heading}, context}
     else
       _ -> {{:error, line}, context}
@@ -60,7 +56,7 @@ defmodule Apollo.Gemini.Gmi do
     end
   end
 
-  defp line_to_html(:empty, line, context= %{codeblock: false}) do
+  defp line_to_html(:empty, _line, context= %{codeblock: false}) do
     {{:line, ""}, context}
   end
 
@@ -68,11 +64,11 @@ defmodule Apollo.Gemini.Gmi do
     {{:line, line}, context}
   end
 
-  defp line_to_html(:code, line, context = %{codeblock: flag}) do
+  defp line_to_html(:code, _line, context = %{codeblock: flag}) do
     {{:code_boundary, !flag}, %{context | codeblock: !flag}}
   end
 
-  defp line_to_html(type, line, context = %{codeblock: true}) do
+  defp line_to_html(_type, line, context = %{codeblock: true}) do
     {{:code, line}, context}
   end
 
