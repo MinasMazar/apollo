@@ -114,11 +114,14 @@ defmodule ApolloWeb do
   end
 
   def proxy_link(url, document) do
-    base_url = ApolloWeb.Endpoint.url() <> "?"
+    proxy_uri = URI.parse(ApolloWeb.Endpoint.url())
     case sanitize_target(url, document) do
-      {:ok, %URI{scheme: "http" <> _}} -> {:http, url}
-      {:ok, target = %URI{scheme: scheme}} ->
-	{String.to_atom(scheme), base_url <> URI.encode_query(%{url: URI.to_string(target)}), URI.to_string(target)}
+      {:ok, %{scheme: "http" <> _}} -> {:http, url}
+      {:ok, gemini_uri = %{scheme: "gemini"}} ->
+	query_string = URI.encode_query(url: URI.to_string(gemini_uri))
+	apollo_url = URI.append_query(proxy_uri, query_string)
+	{:gemini, URI.to_string(apollo_url), URI.to_string(gemini_uri)}
+      {:ok, uri = %URI{}} -> {uri.scheme, URI.to_string(uri)}
       {:error, _} -> :error
     end
   end
@@ -129,27 +132,10 @@ defmodule ApolloWeb do
     end
   end
 
-  def sanitize_target(uri = %{scheme: nil}, document) do
-    sanitize_target(%{uri | scheme: document.uri.scheme || "gemini"}, document)
+  def sanitize_target(uri = %URI{}, document) do
+    document.uri
+    |> URI.merge(uri)
+    |> URI.new()
   end
-
-  def sanitize_target(uri = %{host: nil}, document) do
-    sanitize_target(%{uri | host: document.uri.host}, document)
-  end
-
-  def sanitize_target(uri = %{path: nil}, document) do
-    sanitize_target(%{uri | path: "/"}, document)
-  end
-
-  def sanitize_target(uri = %{path: "/" <> path, host: host}, document) when not is_nil(host) do
-    URI.new(uri)
-  end
-
-  def sanitize_target(uri = %{path: path, host: host}, document) when not is_nil(host) do
-    fullpath = document.uri.path <> "/" <> path
-    sanitize_target(%{uri | path: fullpath}, document)
-  end
-
-  def sanitize_target(uri, document) when is_map(uri), do: URI.new(uri)
 end
 

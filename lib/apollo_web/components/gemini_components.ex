@@ -56,7 +56,7 @@ defmodule ApolloWeb.GeminiComponents do
     case ApolloWeb.proxy_link(url, gmi) do
       {:http, url} -> http_link(url: url, title: title)
       {:gemini, apollo_url, gemini_url} -> gemini_link(apollo_url: apollo_url, gemini_url: gemini_url, title: title)
-      {_, apollo_url} -> other_link(url: apollo_url, title: title)
+      {other, url} -> other_link(url: url, title: title)
       :error -> "<span class=\"py-0.5\">ERROR</span>"
     end
   end
@@ -84,7 +84,7 @@ defmodule ApolloWeb.GeminiComponents do
     ~H"""
     <span class="hover:bg-cyan-400">
       => 
-      <.link phx-click="navigate" phx-value-url={@gemini_url} class="py-0.5 cursor-pointer underline"><%= @title %></.link>
+      <.link navigate={@apollo_url} phx-click="navigate" phx-value-url={@gemini_url} class="py-0.5 cursor-pointer underline"><%= @title %></.link>
     </span>
     """
   end
