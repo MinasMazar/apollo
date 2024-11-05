@@ -1,8 +1,5 @@
 <header class="px-4 sm:px-6 lg:px-8">
   <div class="flex justify-between space-x-4 border-b border-zinc-100 py-3 text-sm">
-    <div :if={assigns[:navigation] && @navigation.back_url} class="w-1-/12">
-      <span phx-click="back" class="p-2 w-5 h-5">🔙 Back</span>
-    </div>
     <div class="w-10/12">
       <form :if={assigns[:navigation]} for="gemini-url">
 	<.input name="url" value={@navigation.current_url} />
