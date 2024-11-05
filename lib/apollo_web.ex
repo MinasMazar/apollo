@@ -113,6 +113,7 @@ defmodule ApolloWeb do
     apply(__MODULE__, which, [])
   end
 
+  def proxy_link(nil, document), do: :error
   def proxy_link(url, document) do
     proxy_uri = URI.parse(ApolloWeb.Endpoint.url())
     case sanitize_target(url, document) do
@@ -138,4 +139,3 @@ defmodule ApolloWeb do
     |> URI.new()
   end
 end
-
