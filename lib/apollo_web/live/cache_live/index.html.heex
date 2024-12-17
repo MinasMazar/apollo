@@ -1,0 +1,15 @@
+<.header>
+  Listing Cache
+</.header>
+
+<.table
+  id="cache"
+  rows={@streams.cache}
+>
+  <:col :let={{_id, entry}} label="Url"><%= inspect entry %></:col>
+  <:action :let={{_id, bookmark}}>
+    <div class="sr-only">
+      <.link navigate={~p"/bookmarks/#{bookmark}"}>Show</.link>
+    </div>
+  </:action>
+</.table>

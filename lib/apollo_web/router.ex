@@ -25,6 +25,8 @@ defmodule ApolloWeb.Router do
 
     live "/bookmarks/:id", BookmarkLive.Show, :show
     live "/bookmarks/:id/show/edit", BookmarkLive.Show, :edit
+
+    live "/cache", CacheLive.Index, :index
   end
 
   # Other scopes may use custom stacks.
